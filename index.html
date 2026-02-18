@@ -1363,7 +1363,7 @@
               'Authorization': `Bearer ${SUPABASE_KEY}`,
               'Prefer': 'return=minimal'
             },
-            body: JSON.stringify({ name, email, message, created_at: new Date().toISOString() })
+            body: JSON.stringify({ name, email, message, "created-at": new Date().toISOString() })
           });
 
           if (res.ok || res.status === 201) {
@@ -1393,5 +1393,6 @@
 </body>
 
 </html>
+
 
 
