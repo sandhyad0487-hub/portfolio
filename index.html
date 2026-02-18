@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1333,21 +1334,9 @@
     })();
 
     // ── Supabase Contact Form ──────────────────────────────────────────
-    (async function () {
+    (function () {
       const SUPABASE_URL = 'https://cmegzgyfcsckhaptjpoz.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtZWd6Z3lmY3Nja2hhcHRqcG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzA3MTAsImV4cCI6MjA4NzAwNjcxMH0.BXuP14fSmiJc5Qa1giIrEuMARWHG4Lg2wv9x2_tr5dM';
-
-      // Dynamically load Supabase JS v2
-      await new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-        s.onload = resolve;
-        s.onerror = reject;
-        document.head.appendChild(s);
-      });
-
-      const { createClient } = window.supabase;
-      const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
       const form = document.getElementById('contact-form');
       const status = document.getElementById('contact-status');
@@ -1364,16 +1353,34 @@
         status.style.color = 'var(--neon-cyan)';
         status.textContent = '';
 
-        const { error } = await db.from('contacts').insert([{ name, email, message }]);
+        try {
+          // Use raw fetch with Prefer: return=minimal to avoid SELECT-back
+          // (avoids RLS issues when anon role has INSERT but not SELECT)
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/contacts`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ name, email, message })
+          });
 
-        if (error) {
+          if (res.ok || res.status === 201) {
+            status.style.color = 'var(--neon-green)';
+            status.textContent = "✓ Message sent! I'll get back to you within 24h.";
+            form.reset();
+          } else {
+            const errText = await res.text();
+            console.error('Supabase error:', res.status, errText);
+            status.style.color = 'var(--neon-pink)';
+            status.textContent = '✗ Something went wrong (' + res.status + '). Please try again.';
+          }
+        } catch (err) {
+          console.error('Network error:', err);
           status.style.color = 'var(--neon-pink)';
-          status.textContent = '✗ Something went wrong. Please try again.';
-          console.error('Supabase error:', error);
-        } else {
-          status.style.color = 'var(--neon-green)';
-          status.textContent = '✓ Message sent! I\'ll get back to you within 24h.';
-          form.reset();
+          status.textContent = '✗ Network error. Please check your connection.';
         }
 
         btn.disabled = false;
