@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -789,11 +790,11 @@
             <a href="#contact" class="btn btn--outline">LET'S BUILD</a>
           </div>
           <div class="hero-profile-mobile">
-            <div class="avatar-frame"><img src="san.jpeg" alt="sandhya" class="avatar-img"></div>
+            <div class="avatar-frame"><img src="sand.jpeg" alt="sandhya" class="avatar-img"></div>
           </div>
         </div>
         <div class="hero-visual">
-          <div class="avatar-frame"><img src="san.jpeg" alt="sandhya" class="avatar-img"></div>
+          <div class="avatar-frame"><img src="sand.jpeg" alt="sandhya" class="avatar-img"></div>
         </div>
       </div>
     </div>
@@ -955,80 +956,17 @@
     </div>
   </div>
 
-  <script>
-    // Certificate modal + view links
-    const modal = document.getElementById("certificateModal");
-    const modalImg = document.getElementById("modalImage");
-    const closeBtn = document.querySelector(".close-btn");
-    const certSrcMap = { 'nas': 'nas.jpeg', 'aws': 'aws.jpeg', 'front': 'front.jpeg' };
+  <!-- FOOTER (cleaned) -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-name">Sandhya.D✦</span>
+        <!-- social icons removed -->
+      </div>
+      <div class="copyright"><p>© 2025 sandhya.d — bright & morphing · light view button</p></div>
+    </div>
+  </footer>
 
-    document.querySelectorAll('.view-cert-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault(); e.stopPropagation();
-        const key = this.dataset.cert;
-        if (certSrcMap[key]) { modalImg.src = certSrcMap[key]; modal.style.display = 'flex'; }
-      });
-    });
-    document.querySelectorAll(".certificate-img").forEach(img => {
-      img.addEventListener("click", function(e) { e.stopPropagation(); modal.style.display = "flex"; modalImg.src = this.src; });
-    });
-    if (closeBtn) closeBtn.addEventListener("click", () => modal.style.display = "none");
-    modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal.style.display === "flex") modal.style.display = "none"; });
-
-    // mobile menu
-    (function() {
-      const mobileBtn = document.querySelector('.mobile-menu-btn');
-      const nav = document.querySelector('.nav-links');
-      if (mobileBtn) {
-        mobileBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          nav.classList.toggle('active');
-          let icon = mobileBtn.querySelector('i');
-          icon.classList.toggle('fa-bars');
-          icon.classList.toggle('fa-times');
-        });
-      }
-      document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => {
-        nav.classList.remove('active');
-        if (mobileBtn) mobileBtn.querySelector('i').className = 'fas fa-bars';
-      }));
-
-      // Project modal data
-      const projectsData = {
-        'ecommerce': { title: 'E-commerce Analytics Dashboard', image: 'ecommerce_dashboard.png', tags: ['HTML5', 'CSS3', 'JavaScript'], description: 'The E-Commerce Analytics Dashboard provides a centralized view of business performance through structured sales tracking, revenue analysis, customer insights, and inventory monitoring.' },
-        'eco': { title: 'Sustainability App', image: 'eco_friendly_app.png', tags: ['React Native', 'Firebase', 'Carbon Tracking'], description: 'The Sustainability App provides a structured platform for monitoring and reducing personal carbon footprint through activity tracking and goal-based progress visualization.' }
-      };
-      const projectModal = document.getElementById('project-modal');
-      const projectCloseBtn = document.querySelector('.modal-close');
-      const pModalImg = document.getElementById('modal-img');
-      const pModalTitle = document.getElementById('modal-title');
-      const pModalTags = document.getElementById('modal-tags');
-      const pModalDesc = document.getElementById('modal-description');
-
-      window.openModal = (id) => {
-        let p = projectsData[id]; if (!p) return;
-        pModalImg.src = p.image; pModalTitle.textContent = p.title; pModalDesc.textContent = p.description;
-        pModalTags.innerHTML = '';
-        p.tags.forEach(t => { let span = document.createElement('span'); span.className = 'tag'; span.textContent = t; pModalTags.appendChild(span); });
-        projectModal.style.display = 'flex'; document.body.style.overflow = 'hidden';
-      };
-      document.querySelectorAll('.view-details-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => { e.preventDefault(); openModal(btn.dataset.id); });
-      });
-      if (projectCloseBtn) projectCloseBtn.addEventListener('click', () => { projectModal.style.display = 'none'; document.body.style.overflow = 'auto'; });
-      window.addEventListener('click', (e) => { if (e.target === projectModal) { projectModal.style.display = 'none'; document.body.style.overflow = 'auto'; } });
-
-      // smooth scroll
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          let href = this.getAttribute('href');
-          if (href === '#') return;
-          let target = document.querySelector(href);
-          if (target) { e.preventDefault(); window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' }); }
-        });
-      });
-    })();
  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
@@ -1088,6 +1026,5 @@
 </script>
 </body>
 </html>
-
 
 
