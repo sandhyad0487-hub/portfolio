@@ -1,0 +1,28 @@
+name: Deploy to Render (Manual)
+
+on:
+  push:
+    branches:
+      - main   # or your branch name
+      
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for deploying (optional)'
+        required: false
+        default: 'Manual deploy'
+
+jobs:
+  deploy:
+    name: Trigger Render Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Ping Render Deploy Hook
+        run: |
+          echo "🚀 Deploying because: ${{ github.event.inputs.reason }}"
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          echo "✅ Deploy triggered successfully!"
