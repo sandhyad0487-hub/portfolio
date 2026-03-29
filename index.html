@@ -955,108 +955,63 @@
     </div>
   </div>
 
-  <script>
-    // Certificate modal + view links
-    const modal = document.getElementById("certificateModal");
-    const modalImg = document.getElementById("modalImage");
-    const closeBtn = document.querySelector(".close-btn");
-    const certSrcMap = { 'nas': 'nas.jpeg', 'aws': 'aws.jpeg', 'front': 'front.jpeg' };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
-    document.querySelectorAll('.view-cert-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault(); e.stopPropagation();
-        const key = this.dataset.cert;
-        if (certSrcMap[key]) { modalImg.src = certSrcMap[key]; modal.style.display = 'flex'; }
+  const firebaseConfig = {
+    apiKey: "AIzaSyA26tVKb_ZviJKBdcx632Dfizs66pQrCFo",
+    authDomain: "portfolio-a59a8.firebaseapp.com",
+    databaseURL: "https://portfolio-a59a8-default-rtdb.firebaseio.com",
+    projectId: "portfolio-a59a8",
+    storageBucket: "portfolio-a59a8.firebasestorage.app",
+    messagingSenderId: "726253299230",
+    appId: "1:726253299230:web:fc6fba9f0f077e4f6c300f",
+    measurementId: "G-YSVWNSWR5V"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('contact-status');
+  const btn = document.getElementById('contact-submit');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('contact-name').value.trim();
+    const email = document.getElementById('contact-email').value.trim();
+    const message = document.getElementById('contact-message').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = "sending...";
+    status.textContent = "";
+
+    try {
+      await push(ref(db, 'contacts'), {
+        name,
+        email,
+        message,
+        createdAt: new Date().toISOString()
       });
-    });
-    document.querySelectorAll(".certificate-img").forEach(img => {
-      img.addEventListener("click", function(e) { e.stopPropagation(); modal.style.display = "flex"; modalImg.src = this.src; });
-    });
-    if (closeBtn) closeBtn.addEventListener("click", () => modal.style.display = "none");
-    modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal.style.display === "flex") modal.style.display = "none"; });
 
-    // mobile menu
-    (function() {
-      const mobileBtn = document.querySelector('.mobile-menu-btn');
-      const nav = document.querySelector('.nav-links');
-      if (mobileBtn) {
-        mobileBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          nav.classList.toggle('active');
-          let icon = mobileBtn.querySelector('i');
-          icon.classList.toggle('fa-bars');
-          icon.classList.toggle('fa-times');
-        });
-      }
-      document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => {
-        nav.classList.remove('active');
-        if (mobileBtn) mobileBtn.querySelector('i').className = 'fas fa-bars';
-      }));
+      status.style.color = 'var(--neon-green)';
+      status.textContent = "✓ Message sent successfully!";
+      form.reset();
 
-      // Project modal data
-      const projectsData = {
-        'ecommerce': { title: 'E-commerce Analytics Dashboard', image: 'ecommerce_dashboard.png', tags: ['HTML5', 'CSS3', 'JavaScript'], description: 'The E-Commerce Analytics Dashboard provides a centralized view of business performance through structured sales tracking, revenue analysis, customer insights, and inventory monitoring.' },
-        'eco': { title: 'Sustainability App', image: 'eco_friendly_app.png', tags: ['React Native', 'Firebase', 'Carbon Tracking'], description: 'The Sustainability App provides a structured platform for monitoring and reducing personal carbon footprint through activity tracking and goal-based progress visualization.' }
-      };
-      const projectModal = document.getElementById('project-modal');
-      const projectCloseBtn = document.querySelector('.modal-close');
-      const pModalImg = document.getElementById('modal-img');
-      const pModalTitle = document.getElementById('modal-title');
-      const pModalTags = document.getElementById('modal-tags');
-      const pModalDesc = document.getElementById('modal-description');
+    } catch (error) {
+      console.error(error);
+      status.style.color = 'var(--neon-pink)';
+      status.textContent = "✗ Failed to send message.";
+    }
 
-      window.openModal = (id) => {
-        let p = projectsData[id]; if (!p) return;
-        pModalImg.src = p.image; pModalTitle.textContent = p.title; pModalDesc.textContent = p.description;
-        pModalTags.innerHTML = '';
-        p.tags.forEach(t => { let span = document.createElement('span'); span.className = 'tag'; span.textContent = t; pModalTags.appendChild(span); });
-        projectModal.style.display = 'flex'; document.body.style.overflow = 'hidden';
-      };
-      document.querySelectorAll('.view-details-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => { e.preventDefault(); openModal(btn.dataset.id); });
-      });
-      if (projectCloseBtn) projectCloseBtn.addEventListener('click', () => { projectModal.style.display = 'none'; document.body.style.overflow = 'auto'; });
-      window.addEventListener('click', (e) => { if (e.target === projectModal) { projectModal.style.display = 'none'; document.body.style.overflow = 'auto'; } });
-
-      // smooth scroll
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-          let href = this.getAttribute('href');
-          if (href === '#') return;
-          let target = document.querySelector(href);
-          if (target) { e.preventDefault(); window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' }); }
-        });
-      });
-    })();
-
-    // Supabase contact (unchanged)
-    (function() {
-      const SUPABASE_URL = 'https://cmegzgyfcsckhaptjpoz.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtZWd6Z3lmY3Nja2hhcHRqcG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzA3MTAsImV4cCI6MjA4NzAwNjcxMH0.BXuP14fSmiJc5Qa1giIrEuMARWHG4Lg2wv9x2_tr5dM';
-      const form = document.getElementById('contact-form');
-      const status = document.getElementById('contact-status');
-      const btn = document.getElementById('contact-submit');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('contact-name').value.trim();
-          const email = document.getElementById('contact-email').value.trim();
-          const message = document.getElementById('contact-message').value.trim();
-          btn.disabled = true; btn.textContent = 'sending…'; status.textContent = '';
-          try {
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/contacts`, {
-              method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' },
-              body: JSON.stringify({ name, email, message, "created-at": new Date().toISOString() })
-            });
-            if (res.ok || res.status === 201) { status.style.color = 'var(--neon-green)'; status.textContent = "✓ Message sent! I'll get back to you within 24h."; form.reset(); }
-            else { const errText = await res.text(); console.error(errText); status.style.color = 'var(--neon-pink)'; status.textContent = '✗ Error, check console.'; }
-          } catch (err) { status.style.color = 'var(--neon-pink)'; status.textContent = '✗ Network error.'; }
-          btn.disabled = false; btn.textContent = 'send';
-        });
-      }
-    })();
-  </script>
+    btn.disabled = false;
+    btn.textContent = "send";
+  });
+</script>
 </body>
 </html>
 
